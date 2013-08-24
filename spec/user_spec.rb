@@ -13,8 +13,9 @@ describe '用户账号管理' do
   include Rack::Test::Methods
 
   def app
-    Sinatra::Application
+    Zhiyi::Member::Service
   end
+  
 
   it "应当可以查找某一特定用户" do
     get '/user/zengyuxia' do |uid|
