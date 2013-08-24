@@ -16,7 +16,6 @@ module Zhiyi
       end
 
       def self.config
-        raise "Please load config file before use me!" if @@config.nil?
         @@config
       end
 
@@ -53,16 +52,13 @@ module Zhiyi
       # 增加一个用户
       # --------------------------------------------------------------------------------
       def self.add person
-        p '------------------------------------------------------------', Zhiyi::Member::Ldap.config
         entry = [LDAP.mod(LDAP::LDAP_MOD_ADD,'objectclass', Zhiyi::Member::Ldap.config['objectclass'])] +
           (Zhiyi::Member::Ldap.config['attr'].map {|x| LDAP.mod(LDAP::LDAP_MOD_ADD, x, [person[x.to_sym]])})
 
         begin
-          p '------------------------------------------------------------', 1
           Zhiyi::Member::Ldap.connect.add("uid=#{person[:uid]},#{Zhiyi::Member::Ldap.config['base']['person']}", entry)
-          p '------------------------------------------------------------', 2
         rescue LDAP::ResultError
-          raise "No, No"
+          raise "User exist!"
         end
       end
 
@@ -106,7 +102,7 @@ module Zhiyi
       # --------------------------------------------------------------------------------
       def self.delete uid
         begin
-          Zhiyi::Member::Ldap.connect.delete("uid=#{uid}, #{Zhiyi::Member::Ldap.config['base']['person']}")
+          Zhiyi::Member::Ldap.connect.delete("uid=#{uid}, #{Zhiyi::Member::Ldap.config['base']['person']}") if exist? uid
         rescue LDAP::ResultError
           raise
         end
