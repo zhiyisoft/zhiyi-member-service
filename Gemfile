@@ -21,3 +21,5 @@ group :development do
 end
 
 gem 'ruby-ldap'
+gem 'capistrano'
+gem 'rvm-capistrano'
